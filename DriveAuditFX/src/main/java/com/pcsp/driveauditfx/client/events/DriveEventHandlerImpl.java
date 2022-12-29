@@ -18,6 +18,7 @@ public class DriveEventHandlerImpl implements DriveEventHandler {
     }
     @Override
     public void handleDriveConnected(String driveName) throws FileNotFoundException {
+        System.out.println("Drive connected: " + driveName);
             DriveDataImpl driveData = new DriveDataImpl(driveName);
             Drive drive = driveData.getDriveData();
         try {

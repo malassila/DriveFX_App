@@ -11,17 +11,29 @@ public class SocketConnect {
         this.serverSocket = serverSocket;
     }
     public void startSocket() {
-        System.out.println("Server started");
-        try {
-            while (!serverSocket.isClosed()) {
-                Socket socket = serverSocket.accept();
-
-                ServerSideSocket serverSocket = new ServerSideSocket(socket);
-                Thread thread = new Thread(serverSocket);
-                thread.start();
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Socket socket = serverSocket.accept();
+                    System.out.println("Client connected");
+                    new Thread(new ServerSideSocket(socket)).start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        }).start();
+
+//        System.out.println("Server started");
+//        try {
+//            while (!serverSocket.isClosed()) {
+//                Socket socket = serverSocket.accept();
+//
+//                ServerSideSocket serverSocket = new ServerSideSocket(socket);
+//                Thread thread = new Thread(serverSocket);
+//                thread.start();
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 }

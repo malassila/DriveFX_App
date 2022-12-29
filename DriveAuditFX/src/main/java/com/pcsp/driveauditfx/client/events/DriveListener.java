@@ -3,6 +3,7 @@ package com.pcsp.driveauditfx.client.events;
 
 import com.pcsp.driveauditfx.client.socket.ClientSideSocket;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.*;
 
@@ -52,12 +53,17 @@ public class DriveListener implements Runnable {
     }
 
     public void processEvent(WatchEvent.Kind<?> eventKind, String driveHandle) {
-
+    try {
         if (eventKind == ENTRY_CREATE && driveHandle.contains("sd") && !driveHandle.matches("^.*\\d$")) {
             driveHandler.handleDriveConnected(driveHandle);
         }
         if (eventKind == ENTRY_DELETE && driveHandle.contains("sd") && !driveHandle.matches("^.*\\d$")) {
             driveHandler.handleDriveDisconnected(driveHandle);
         }
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
     }
 }

@@ -48,17 +48,17 @@ public class ServerSideSocket implements Runnable {
         }
     }
 
-    public void sendMessageToUI(String message, String ip) {
-        try {
-            Socket singleSocket = new Socket(ip, SERVER_PORT);
-            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(singleSocket.getOutputStream()));
-            bufferedWriter.write(message);
-            bufferedWriter.flush();
-            bufferedWriter.close();
-            singleSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void sendMessageToUI(String message, String ip) {
+//        try {
+//            Socket singleSocket = new Socket(ip, SERVER_PORT);
+//            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(singleSocket.getOutputStream()));
+//            bufferedWriter.write(message);
+//            bufferedWriter.flush();
+//            bufferedWriter.close();
+//            singleSocket.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
 
