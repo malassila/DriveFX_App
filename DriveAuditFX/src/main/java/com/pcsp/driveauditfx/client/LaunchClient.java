@@ -1,0 +1,19 @@
+package com.pcsp.driveauditfx.client;
+
+import com.pcsp.driveauditfx.client.socket.ClientSideSocket;
+
+import java.io.IOException;
+import java.net.Socket;
+
+import static com.pcsp.driveauditfx.client.ClientProperties.SERVER_NAME;
+import static com.pcsp.driveauditfx.shared.SocketProperties.SERVER_IP;
+import static com.pcsp.driveauditfx.shared.SocketProperties.SERVER_PORT;
+
+public class LaunchClient {
+    public static void main(String[] args) throws IOException {
+        Socket socket = new Socket(SERVER_IP, SERVER_PORT);
+        ClientSideSocket clientSideSocket = new ClientSideSocket(socket, SERVER_NAME);
+        Thread thread = new Thread(clientSideSocket);
+        thread.start();
+    }
+}
