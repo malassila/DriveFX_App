@@ -44,7 +44,12 @@ public class DriveServer {
     }
 
     public void addHardDrive(String slot, Drive hardDrive) {
-        slotMap.put(slot, hardDrive);
+        try {
+            slotMap.put(slot, hardDrive);
+        } catch (NullPointerException e) {
+            slotMap = new HashMap<>();
+            slotMap.put(slot, hardDrive);
+        }
     }
 
     public Drive getHardDrive(String slot) {
@@ -69,5 +74,13 @@ public class DriveServer {
 
     public void getHardDriveStatus(String slot) {
         slotMap.get(slot).getStatus();
+    }
+
+    @Override
+    public String toString() {
+        return "DriveServer " + serverName + "{ " +
+                ", status: " + status + "\n" +
+                ", slotMap: " + slotMap +
+                '}';
     }
 }

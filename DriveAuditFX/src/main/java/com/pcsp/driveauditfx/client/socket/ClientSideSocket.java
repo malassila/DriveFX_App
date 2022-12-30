@@ -1,6 +1,7 @@
 package com.pcsp.driveauditfx.client.socket;
 
-import com.pcsp.driveauditfx.client.messages.DriveMessageService;
+import com.pcsp.driveauditfx.shared.messages.DriveMessageService;
+import com.pcsp.driveauditfx.shared.device.Drive;
 
 import java.io.*;
 import java.net.Socket;
@@ -51,8 +52,40 @@ public class ClientSideSocket implements Runnable{
         return serverResponse;
     }
 
-    public void sendAddDriveMessage(String slot, String serialNumber) throws UnknownHostException {
-        String message = DriveMessageService.createMessage(DRIVE, serverName, ADD, slot, serialNumber, "ADD");
+/*        Type messageType,
+        String serverName,
+        String command,
+        String name,
+        String model,
+        String serial,
+        String type,
+        String sectorSize,
+        String size,
+        String smartResult,
+        String slot,
+        String hours,
+        String rsec,
+        String spindleSpeed ,
+        String status
+*/
+    public void sendAddDriveMessage(Drive drive) throws UnknownHostException {
+        String message = String.join(" ",
+                        "DRIVE",
+                        serverName,
+                        ADD.toString(),
+                        drive.getSlot(),
+                        drive.getName(),
+                        drive.getModel(),
+                        drive.getSerial(),
+                        drive.getType(),
+                        drive.getSectorSize(),
+                        drive.getSize(),
+                        drive.getSmartResult(),
+                        drive.getHours(),
+                        drive.getRsec(),
+                        drive.getSpindleSpeed(),
+                        drive.getStatus());
+
         sendMessageToServer(message);
     }
     public void sendRemoveDriveMessage(String slot, String serialNumber) throws UnknownHostException {

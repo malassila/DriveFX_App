@@ -28,7 +28,8 @@ public class DriveDataImpl implements DriveData {
         linuxCommand = new LinuxCommandImpl(drive.getName());
         saveSMART();
         saveDriveInfo();
-            drive.setSlot(getSlot());
+            drive.setSlot(extractSlot(getSlot()));
+//            drive.setSlot(extractSlot("pci-0000:03:00.0-sas-exp0x5001438024db7940-phy7-lun-0"));
             drive.setModel(getModel());
             drive.setSerial(getSerialNumber());
             drive.setType(getType());
@@ -50,6 +51,7 @@ public class DriveDataImpl implements DriveData {
     @Override
     public String getSlot() {
         String commandOutput = linuxCommand.getSlot();
+        System.out.println("Slot: " + commandOutput);
         return extractSlot(commandOutput);
     }
 
@@ -65,8 +67,9 @@ public class DriveDataImpl implements DriveData {
 
     @Override
     public String getModel() {
-        String model = driveInfoData.getValueFromFile("model");
+        String model = smartData.getValueFromFile("model");
         model = extractValueFromDriveData(model);
+//        System.out.println("Model: " + model);
         return model;
     }
 
@@ -74,6 +77,7 @@ public class DriveDataImpl implements DriveData {
     public String getSerialNumber() {
         String serialNumber = driveInfoData.getValueFromFile("serial");
         serialNumber = extractValueFromDriveData(serialNumber);
+//        System.out.println("Serial number: " + serialNumber);
         return serialNumber;
     }
 
@@ -81,6 +85,7 @@ public class DriveDataImpl implements DriveData {
     public String getType() {
         String commandOutput = linuxCommand.getType();
         String driveType = determineDriveType(commandOutput);
+//        System.out.println("Drive type: " + driveType);
         return driveType;
     }
 
@@ -88,6 +93,7 @@ public class DriveDataImpl implements DriveData {
     public String getSectorSize() {
         String sectorSize = driveInfoData.getValueFromFile("phy-sec");
         sectorSize = extractValueFromDriveData(sectorSize);
+//        System.out.println("Sector size: " + sectorSize);
         return sectorSize;
     }
 
@@ -95,15 +101,17 @@ public class DriveDataImpl implements DriveData {
     public String getSize() {
         String size = smartData.getValueFromFile("capacity");
         size = extractSize(size);
+//        System.out.println("Size: " + size);
         return size;
     }
 
     @Override
     public String getSmartResult() {
-        String[] contains = {"SMART overall-health self-assessment test result", "SMART Health Status"};
+        String[] contains = {"smart overall-health self-assessment test result", "smart health status"};
         String smartResult = smartData.getValueFromFileMultiple(contains, false);
         smartResult = extractValueFromDriveData(smartResult);
         smartResult = smartResult.replace("OK", "PASSED");
+//        System.out.println("SMART result: " + smartResult);
         return smartResult;
     }
 
@@ -111,6 +119,7 @@ public class DriveDataImpl implements DriveData {
     public String getPowersOnHours() {
         String powerOnHours = smartData.getValueFromFileTwoValues("power", "hours");
         powerOnHours = extractValueFromSMARTData(powerOnHours);
+//        System.out.println("Power on hours: " + powerOnHours);
         return powerOnHours;
     }
 
@@ -118,13 +127,16 @@ public class DriveDataImpl implements DriveData {
     public String getRotationRate() {
         String rotationRate = smartData.getValueFromFileTwoValues("rotation", "rate");
         rotationRate = extractValueFromDriveData(rotationRate);
+//        System.out.println("Rotation rate: " + rotationRate);
         return rotationRate;
     }
 
     @Override
     public String getReallocatedSectors() {
         String reallocatedSectors = smartData.getValueFromFile("reallocated");
+
         reallocatedSectors = extractValueFromSMARTData(reallocatedSectors);
+//        System.out.println("Reallocated sectors: " + reallocatedSectors);
         return reallocatedSectors;
     }
 

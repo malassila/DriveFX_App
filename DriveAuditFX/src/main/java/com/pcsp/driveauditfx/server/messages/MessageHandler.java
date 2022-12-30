@@ -1,19 +1,20 @@
 package com.pcsp.driveauditfx.server.messages;
 
-import com.pcsp.driveauditfx.shared.Command;
-import com.pcsp.driveauditfx.shared.Project;
+import com.pcsp.driveauditfx.shared.messages.DriveMessageService;
+import com.pcsp.driveauditfx.shared.messages.ServerMessageService;
 import com.pcsp.driveauditfx.shared.device.Drive;
 import com.pcsp.driveauditfx.shared.device.DriveServer;
-
-import java.util.List;
 
 import static com.pcsp.driveauditfx.shared.Project.servers;
 
 public class MessageHandler implements Message {
     private String[] messageArray;
     private DriveServer server;
+    private DriveMessageService driveMessageService;
+    private ServerMessageService serverMessageService;
 
     /**
+     * DRIVE, serverName, ADD, slot, serialNumber, "ADD"
      * messageArray[0] = Message Type
      * messageArray[1] = Server Name
      * messageArray[2] = command
@@ -62,12 +63,16 @@ public class MessageHandler implements Message {
     public void processRawMessage(String message) {
         System.out.println("Processing message");
         messageArray = splitMessage(message);
-        server = getServer();
-        switch (getType()) {
+        String messageType = getType();
+
+        switch (messageType) {
             case "SERVER":
+                serverMessageService = new ServerMessageService(message);
                 processServerMessage();
                 break;
             case "DRIVE":
+                driveMessageService = new DriveMessageService(message);
+
                 processDriveMessage();
                 break;
         }
@@ -79,10 +84,10 @@ public class MessageHandler implements Message {
         System.out.println("Processing server command");
         switch (getCommand()) {
             case "ADD":
-                server.setStatus("Connected");
+//                server.setStatus("Connected");
                 break;
             case "REMOVE":
-                server.setStatus("Disconnected");
+//                server.setStatus("Disconnected");
                 break;
             case "UPDATE":
                 break;
@@ -93,9 +98,9 @@ public class MessageHandler implements Message {
         System.out.println("Processing drive command");
         switch (getCommand()) {
             case "ADD":
-                server.addHardDrive(getSlot(), new Drive(getSerialNumber()));
-                server.getHardDrive(getSlot()).setStatus("Connected");
-                server.getHardDrive(getSlot()).setConnected(true);
+                Drive drive = driveMessageService.saveDriveData();
+                drive.setStatus("IDLE");
+                System.out.println("New drive added to " + drive.getSlot() + "-->>\n-->>" + drive);
                 break;
             case "REMOVE":
                 server.removeHardDrive(getSlot());
@@ -112,4 +117,6 @@ public class MessageHandler implements Message {
                 break;
         }
     }
+
+
 }

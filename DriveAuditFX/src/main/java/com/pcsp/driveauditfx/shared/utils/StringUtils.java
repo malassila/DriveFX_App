@@ -12,6 +12,7 @@ public class StringUtils {
     }
 
     public static String extractValueFromDriveData(String line) {
+        System.out.println("line: " + line);
         StringTokenizer st = new StringTokenizer(line, ":");
         String token = "";
         while (st.hasMoreTokens()) {
@@ -27,6 +28,7 @@ public class StringUtils {
 
     public static String extractSize(String line) {
         String value = line.substring(line.indexOf("[") + 1, line.indexOf("]"));
+        value = value.replace(" ", "");
         return value;
     }
 

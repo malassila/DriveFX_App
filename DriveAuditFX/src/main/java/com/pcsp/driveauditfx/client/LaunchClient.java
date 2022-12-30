@@ -1,5 +1,6 @@
 package com.pcsp.driveauditfx.client;
 
+import com.pcsp.driveauditfx.client.events.DriveEventHandlerImpl;
 import com.pcsp.driveauditfx.client.socket.ClientSideSocket;
 
 import java.io.IOException;
@@ -15,5 +16,8 @@ public class LaunchClient {
         ClientSideSocket clientSideSocket = new ClientSideSocket(socket, SERVER_NAME);
         Thread thread = new Thread(clientSideSocket);
         thread.start();
+        DriveEventHandlerImpl driveEventHandler = new DriveEventHandlerImpl();
+        driveEventHandler.setClientSocket(clientSideSocket);
+        driveEventHandler.handleDriveConnected("sdc");
     }
 }

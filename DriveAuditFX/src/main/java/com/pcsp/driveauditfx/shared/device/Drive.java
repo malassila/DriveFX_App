@@ -140,7 +140,8 @@ public class Drive {
 
     @Override
     public String toString() {
-        return "Drive{" + "slot=" + slot + ", name=" + name + ", model=" + model + ", serial=" + serial + ", type=" + type + ", sectorSize=" + sectorSize + ", size=" + size + ", smartResult=" + smartResult + ", hours=" + hours + ", rsec=" + rsec + ", spindleSpeed=" + spindleSpeed + ", status=" + status + '}';
+        return "Drive " + name + ": model=" + model + ", serial=" + serial + ", type=" + type + ", sectorSize=" + sectorSize + ", size=" + size
+                + ", smartResult=" + smartResult + ", hours=" + hours + ", rsec=" + rsec + ", spindleSpeed=" + spindleSpeed + ", status=" + status + "}\n";
     }
 
 }

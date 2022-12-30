@@ -21,13 +21,12 @@ public class DriveEventHandlerImpl implements DriveEventHandler {
         System.out.println("Drive connected: " + driveName);
             DriveDataImpl driveData = new DriveDataImpl(driveName);
             Drive drive = driveData.getDriveData();
+            System.out.println(drive);
         try {
-            clientSocket.sendAddDriveMessage(drive.getSlot(), drive.getSerial());
+            clientSocket.sendAddDriveMessage(drive);
         } catch (UnknownHostException e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
         }
-        System.out.println(drive);
     }
 
     @Override
