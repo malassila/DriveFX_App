@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class FileData {
     private File file;
     private final String fileName;
-    private final String filePath = "C:\\Users\\Matt\\Desktop\\IntelliJ-Work\\HardDrive\\DriveAuditFX\\src\\main\\java\\com\\pcsp\\driveauditfx\\client\\files\\";
+    private final String filePath = "/smart/";
     private BufferedReader bufferedReader;
     private Scanner scanner;
 
@@ -71,5 +71,16 @@ public class FileData {
     }
 
 
+
+    public static void appendLineToFile(String filePath, String line) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
+            writer.append(line);
+            writer.newLine();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
