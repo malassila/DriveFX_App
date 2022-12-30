@@ -24,6 +24,7 @@ public class LaunchServer extends Application {
         Project project = new Project();
         ServerSocket serverSocket;
         serverSocket = new ServerSocket(project.PORT);
+
         SocketConnect socketConnect = new SocketConnect(serverSocket);
         socketConnect.startSocket();
 

@@ -1,5 +1,6 @@
 package com.pcsp.driveauditfx.server.messages;
 
+import com.pcsp.driveauditfx.server.socket.ServerSideSocket;
 import com.pcsp.driveauditfx.shared.Command;
 import com.pcsp.driveauditfx.shared.device.DriveServer;
 
@@ -14,6 +15,7 @@ public interface Message {
     String getCommand();
     String getSerialNumber();
 
-    void processRawMessage(String message);
+
+    void processRawMessage(String message, ServerSideSocket serverSideSocket);
 
 }

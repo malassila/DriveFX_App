@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class FileData {
     private File file;
     private final String fileName;
-    private final String filePath = "C:\\Users\\Matt\\Desktop\\IntelliJ-Work\\HardDrive\\DriveAuditFX\\src\\main\\java\\com\\pcsp\\driveauditfx\\client\\files\\";
+    private final String filePath = "/smart/";
     private BufferedReader bufferedReader;
     private Scanner scanner;
 
@@ -69,6 +69,12 @@ public class FileData {
         }
         return "N/A";
     }
+
+    public void saveLineToFile(){
+
+    }
+
+
 
 
 

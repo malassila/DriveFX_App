@@ -1,5 +1,7 @@
 package com.pcsp.driveauditfx.server.messages;
 
+import com.pcsp.driveauditfx.server.socket.ServerSideSocket;
+import com.pcsp.driveauditfx.shared.Project;
 import com.pcsp.driveauditfx.shared.messages.DriveMessageService;
 import com.pcsp.driveauditfx.shared.messages.ServerMessageService;
 import com.pcsp.driveauditfx.shared.device.Drive;
@@ -12,6 +14,7 @@ public class MessageHandler implements Message {
     private DriveServer server;
     private DriveMessageService driveMessageService;
     private ServerMessageService serverMessageService;
+    private ServerSideSocket serverSideSocket;
 
     /**
      * DRIVE, serverName, ADD, slot, serialNumber, "ADD"
@@ -58,12 +61,19 @@ public class MessageHandler implements Message {
         return messageArray;
     }
 
+    public void serverDisconnected() {
+
+    }
+
 
     @Override
-    public void processRawMessage(String message) {
-        System.out.println("Processing message");
+    public void processRawMessage(String message, ServerSideSocket serverSideSocket) {
+//        System.out.println("Processing message");
+        this.serverSideSocket = serverSideSocket;
         messageArray = splitMessage(message);
+        this.server = getServer();
         String messageType = getType();
+
 
         switch (messageType) {
             case "SERVER":
@@ -71,40 +81,53 @@ public class MessageHandler implements Message {
                 processServerMessage();
                 break;
             case "DRIVE":
-                driveMessageService = new DriveMessageService(message);
-
-                processDriveMessage();
+                processDriveMessage(message);
                 break;
         }
     }
 
 
 
-    void processServerMessage() {
+    public void processServerMessage() {
         System.out.println("Processing server command");
         switch (getCommand()) {
             case "ADD":
-//                server.setStatus("Connected");
-                break;
-            case "REMOVE":
-//                server.setStatus("Disconnected");
+                this.serverSideSocket.setDriveServer(server);
+                ServerSideSocket.addDriveServer(server);
+                this.server.setStatus("Connected");
                 break;
             case "UPDATE":
+                break;
+            default:
+                System.out.println("REMOVED SUCCESSFULLY");
+                this.server.setStatus("Disconnected");
+                System.out.println(this.server);
                 break;
         }
     }
 
-    void processDriveMessage() {
-        System.out.println("Processing drive command");
+    void processDriveMessage(String message) {
+//        System.out.println("Processing drive command");
         switch (getCommand()) {
             case "ADD":
+                driveMessageService = new DriveMessageService(message);
+
                 Drive drive = driveMessageService.saveDriveData();
                 drive.setStatus("IDLE");
-                System.out.println("New drive added to " + drive.getSlot() + "-->>\n-->>" + drive);
+                Project.addDrive(drive);
+                System.out.println(this.server.getServerName() + ": New drive added to " + drive.getSlot() + "-->>\n-->>" + drive);
+                this.server.incrementNumOfDrives();
+                System.out.println(this.server);
                 break;
             case "REMOVE":
-                server.removeHardDrive(getSlot());
-                server.getHardDrive(getSlot()).setConnected(false);
+                drive = Project.getDrive(messageArray[3]);
+                System.out.println("DRIVE REMOVED SUCCESSFULLY");
+                drive.setConnected(false);
+                System.out.println(drive);
+                System.out.println(drive.getSlot() + "<<<<<<<");
+                server.removeHardDrive(drive.getSlot());
+                this.server.decrementNumOfDrives();
+                System.out.println(this.server);
                 break;
             case "WIPING":
                 server.getHardDrive(getSlot()).setStatus("Wiping");

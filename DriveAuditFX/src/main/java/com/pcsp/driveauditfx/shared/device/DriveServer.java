@@ -8,6 +8,7 @@ public class DriveServer {
     private String serverName;
     private String status;
     private HashMap<String, Drive> slotMap;
+    private int numberOfDrivesConnected;
 
 
     public DriveServer() {
@@ -43,6 +44,22 @@ public class DriveServer {
         this.slotMap = slotMap;
     }
 
+    public int getNumOfDrives() {
+        return numberOfDrivesConnected;
+    }
+
+    public void setNumOfDrives(int numberOfDrivesConnected) {
+        this.numberOfDrivesConnected = numberOfDrivesConnected;
+    }
+
+    public void incrementNumOfDrives() {
+        this.numberOfDrivesConnected++;
+    }
+
+    public void decrementNumOfDrives() {
+        this.numberOfDrivesConnected--;
+    }
+
     public void addHardDrive(String slot, Drive hardDrive) {
         try {
             slotMap.put(slot, hardDrive);
@@ -58,6 +75,10 @@ public class DriveServer {
 
     public void removeHardDrive(String slot) {
         slotMap.remove(slot);
+    }
+
+    public Drive getDriveByName(String driveName) {
+        return slotMap.values().stream().filter(drive -> drive.getName().equals(driveName)).findFirst().orElse(null);
     }
 
     public void clearHardDrives() {
@@ -79,8 +100,9 @@ public class DriveServer {
     @Override
     public String toString() {
         return "DriveServer " + serverName + "{ " +
-                ", status: " + status + "\n" +
-                ", slotMap: " + slotMap +
+                "number of drives=" + getNumOfDrives() +
+                "\nstatus: " + status + "\n" +
+                ", slotMap:\n" + slotMap +
                 '}';
     }
 }

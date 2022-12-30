@@ -19,6 +19,8 @@ public class SocketConnect {
                     new Thread(new ServerSideSocket(socket)).start();
                 } catch (IOException e) {
                     e.printStackTrace();
+                } finally {
+//                    System.out.println("Client disconnected");
                 }
             }
         }).start();

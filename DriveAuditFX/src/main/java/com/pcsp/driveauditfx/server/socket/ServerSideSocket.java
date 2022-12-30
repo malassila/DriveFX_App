@@ -8,6 +8,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.pcsp.driveauditfx.shared.SharedMethods.closeEverything;
@@ -20,12 +21,14 @@ public class ServerSideSocket implements Runnable {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private MessageHandler messageHandler;
+    private DriveServer driveServer;
     public ServerSideSocket(Socket socket) {
         try {
             this.socket = socket;
             this.messageHandler = new MessageHandler();
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.driveServers = new ArrayList<>();
             System.out.println("Server has been connected successfully!");
         } catch (IOException e) {
             closeEverything(socket, bufferedReader, bufferedWriter);
@@ -36,11 +39,14 @@ public class ServerSideSocket implements Runnable {
     public void run() {
         String serverResponse;
         try {
-            while (socket.isConnected()) {
+            while (socket.isConnected() || bufferedReader.ready()) {
                 serverResponse = bufferedReader.readLine();
                 if (serverResponse != null) {
-                    System.out.println("Server Response: " + serverResponse);
-                    messageHandler.processRawMessage(serverResponse);
+//                    System.out.println("Server Response: " + serverResponse);
+                    messageHandler.processRawMessage(serverResponse, this);
+                } else {
+                    messageHandler.processServerMessage();
+                    closeEverything(socket, bufferedReader, bufferedWriter);
                 }
             }
         } catch (IOException e) {
@@ -48,7 +54,23 @@ public class ServerSideSocket implements Runnable {
         }
     }
 
-//    public void sendMessageToUI(String message, String ip) {
+    public DriveServer getDriveServer() {
+        return driveServer;
+    }
+
+    public void setDriveServer(DriveServer driveServer) {
+        this.driveServer = driveServer;
+    }
+
+    public static void addDriveServer(DriveServer driveServer) {
+        driveServers.add(driveServer);
+    }
+
+    public void removeDriveServer(DriveServer driveServer) {
+        driveServers.remove(driveServer);
+    }
+
+    //    public void sendMessageToUI(String message, String ip) {
 //        try {
 //            Socket singleSocket = new Socket(ip, SERVER_PORT);
 //            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(singleSocket.getOutputStream()));
