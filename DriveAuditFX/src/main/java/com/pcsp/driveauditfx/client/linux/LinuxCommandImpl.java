@@ -30,15 +30,23 @@ public class LinuxCommandImpl implements LinuxCommand {
 
 
 
-    public static String runCommand(String command) {
-//        System.out.println("Running command: " + command);
+    public static String runCommand(String command, String name) {
+        System.out.println("Running command: " + command);
         String output = "";
         try {
             Process p = Runtime.getRuntime().exec(command);
             p.waitFor();
-            reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(p.getInputStream()));
             String line = "";
             while ((line = reader.readLine()) != null) {
+                if (command.contains("smartctl")) {
+                    FileData.appendLineToFile("/smart/smart_" + name + ".txt", line);
+                } else if (command.contains("lsblk")) {
+                    FileData.appendLineToFile("/smart/driveInfo_" + name + ".txt", line);
+                } else {
+                    output += line;
+                }
+                System.out.println("-->> " + line);
                 output += line + " ";
             }
         } catch (Exception e) {
@@ -49,23 +57,23 @@ public class LinuxCommandImpl implements LinuxCommand {
 
     @Override
     public String getSlot() {
-        return runCommand(SLOT_COMMAND);
+        return runCommand(SLOT_COMMAND, this.driveName);
     }
 
     @Override
     public String getType() {
-        return runCommand(TYPE_COMMAND);
+        return runCommand(TYPE_COMMAND, this.driveName);
     }
 
     @Override
     public void saveSMART() {
 //        System.out.println("Saving SMART data for drive: " + driveName);
-        runCommand(SMARTCTL_COMMAND);
+        runCommand(SMARTCTL_COMMAND, this.driveName);
     }
 
     @Override
     public void saveDriveInfo() {
-        runCommand(DRIVE_INFO_COMMAND);
+        runCommand(DRIVE_INFO_COMMAND, this.driveName);
     }
 
 }

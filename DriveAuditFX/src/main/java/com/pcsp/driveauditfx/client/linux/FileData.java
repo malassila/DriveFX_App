@@ -78,4 +78,15 @@ public class FileData {
 
 
 
+    public static void appendLineToFile(String filePath, String line) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
+            writer.append(line);
+            writer.newLine();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
