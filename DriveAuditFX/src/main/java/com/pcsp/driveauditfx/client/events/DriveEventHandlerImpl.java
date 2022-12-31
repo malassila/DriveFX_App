@@ -31,6 +31,12 @@ public class DriveEventHandlerImpl implements DriveEventHandler {
 
     @Override
     public void handleDriveDisconnected(String driveName) {
+        System.out.println("Drive disconnected: " + driveName);
+//        try {
+//            clientSocket.sendRemoveDriveMessage(driveName);
+//        } catch (UnknownHostException e) {
+//            e.printStackTrace();
+//        }
 
     }
 

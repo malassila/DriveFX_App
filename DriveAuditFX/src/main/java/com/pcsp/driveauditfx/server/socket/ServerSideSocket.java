@@ -22,10 +22,10 @@ public class ServerSideSocket implements Runnable {
     private BufferedWriter bufferedWriter;
     private MessageHandler messageHandler;
     private DriveServer driveServer;
-    public ServerSideSocket(Socket socket) {
+    public ServerSideSocket(Socket socket, MessageHandler messageHandler) {
         try {
             this.socket = socket;
-            this.messageHandler = new MessageHandler();
+            this.messageHandler = messageHandler;
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.driveServers = new ArrayList<>();

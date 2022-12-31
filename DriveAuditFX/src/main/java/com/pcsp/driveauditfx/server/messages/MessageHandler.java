@@ -1,20 +1,29 @@
 package com.pcsp.driveauditfx.server.messages;
 
+import com.pcsp.driveauditfx.server.FX.controller.MainController;
+import com.pcsp.driveauditfx.server.database.*;
 import com.pcsp.driveauditfx.server.socket.ServerSideSocket;
 import com.pcsp.driveauditfx.shared.Project;
+import com.pcsp.driveauditfx.shared.device.ServerModel;
 import com.pcsp.driveauditfx.shared.messages.DriveMessageService;
 import com.pcsp.driveauditfx.shared.messages.ServerMessageService;
 import com.pcsp.driveauditfx.shared.device.Drive;
 import com.pcsp.driveauditfx.shared.device.DriveServer;
+
+import java.sql.SQLException;
 
 import static com.pcsp.driveauditfx.shared.Project.servers;
 
 public class MessageHandler implements Message {
     private String[] messageArray;
     private DriveServer server;
+    private ServerModel serverModel;
     private DriveMessageService driveMessageService;
     private ServerMessageService serverMessageService;
     private ServerSideSocket serverSideSocket;
+    private DriveServerDAO driveServerDAO;
+    private HardDriveDAO hardDriveDAO;
+    private MainController mainController;
 
     /**
      * DRIVE, serverName, ADD, slot, serialNumber, "ADD"
@@ -65,6 +74,10 @@ public class MessageHandler implements Message {
 
     }
 
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
+
 
     @Override
     public void processRawMessage(String message, ServerSideSocket serverSideSocket) {
@@ -95,51 +108,168 @@ public class MessageHandler implements Message {
                 this.serverSideSocket.setDriveServer(server);
                 ServerSideSocket.addDriveServer(server);
                 this.server.setStatus("Connected");
+                serverDAO().driveServerConnected(server);
                 break;
             case "UPDATE":
                 break;
             default:
                 System.out.println("REMOVED SUCCESSFULLY");
                 this.server.setStatus("Disconnected");
-                System.out.println(this.server);
+                serverDAO().driveServerDisconnected(server);
                 break;
         }
     }
 
     void processDriveMessage(String message) {
-//        System.out.println("Processing drive command");
         switch (getCommand()) {
             case "ADD":
-                driveMessageService = new DriveMessageService(message);
-
-                Drive drive = driveMessageService.saveDriveData();
-                drive.setStatus("IDLE");
-                Project.addDrive(drive);
-                System.out.println(this.server.getServerName() + ": New drive added to " + drive.getSlot() + "-->>\n-->>" + drive);
-                this.server.incrementNumOfDrives();
-                System.out.println(this.server);
+                    handleDriveConnected(getSerialNumber());
                 break;
             case "REMOVE":
-                drive = Project.getDrive(messageArray[3]);
-                System.out.println("DRIVE REMOVED SUCCESSFULLY");
-                drive.setConnected(false);
-                System.out.println(drive);
-                System.out.println(drive.getSlot() + "<<<<<<<");
-                server.removeHardDrive(drive.getSlot());
-                this.server.decrementNumOfDrives();
-                System.out.println(this.server);
+                    handleDriveRemoved(getSerialNumber());
                 break;
             case "WIPING":
-                server.getHardDrive(getSlot()).setStatus("Wiping");
+                    handleDriveWipeStart(getSerialNumber());
                 break;
             case "COMPLETE":
-                server.getHardDrive(getSlot()).setStatus("Complete");
+                    handleDriveWipeComplete(getSerialNumber());
                 break;
             case "ERROR":
-                server.getHardDrive(getSlot()).setStatus("Error Occurred");
+                 handleDriveError(getSerialNumber());
                 break;
         }
     }
+
+
+    public DriveServerDAO serverDAO(){
+            driveServerDAO = new ServerDAO(DatabaseConnection.getConnection());
+            return driveServerDAO;
+    }
+
+    public  HardDriveDAO driveDAO(){
+            hardDriveDAO = new DriveDAO(DatabaseConnection.getConnection());
+            return hardDriveDAO;
+    }
+
+    public void handleDriveConnected(String message){
+        driveMessageService = new DriveMessageService(message);
+        Drive drive = driveMessageService.saveDriveData();
+        drive.setStatus("IDLE");
+        Project.addDrive(drive);
+        this.server.incrementNumOfDrives();
+        // Add the drive to the slotMap in the DriveServer class
+        server.addHardDrive(drive.getSlot(), drive);
+
+        serverModel = Project.getServerModel(server.getServerName());
+
+        serverModel.setNumOfConnected(serverModel.getNumOfConnected() + 1);
+        serverDAO().updateDriveServer(serverModel);
+//        serverModel.setNumOfWiping(serverModel.getNumOfWiping() + 1);
+
+        // Insert the new drive into the database
+        driveDAO().insertHardDrive(drive);
+        // Update the ServerModel in the database
+        serverDAO().updateDriveServer(serverModel);
+
+        // Update the UI
+        mainController.updateUI(serverModel);
+    }
+
+    public void handleDriveWipeStart(String message){
+            Drive drive = server.getHardDrive(getSlot());
+            drive.setStatus("Wiping");
+
+            serverModel = Project.getServerModel(server.getServerName());
+
+            serverModel.setNumOfWiping(serverModel.getNumOfWiping() + 1);
+
+        try {
+            // Update the drive into the database
+            driveDAO().updateStatus(getSerialNumber(), "Wiping");
+            // Update the ServerModel in the database
+            serverDAO().updateDriveServer(serverModel);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        // Update the UI
+        mainController.updateUI(serverModel);
+    }
+    public void handleDriveWipeComplete(String message){
+            Drive drive = server.getHardDrive(getSlot());
+            drive.setStatus("Complete");
+
+            serverModel = Project.getServerModel(server.getServerName());
+
+            serverModel.setNumOfWiping(serverModel.getNumOfWiping() - 1);
+            serverModel.setNumOfCompleted(serverModel.getNumOfCompleted() + 1);
+
+        try {
+            // Update the drive into the database
+            driveDAO().updateStatus(getSerialNumber(), "Complete");
+            // Update the ServerModel in the database
+            serverDAO().updateDriveServer(serverModel);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        // Update the UI
+        mainController.updateUI(serverModel);
+    }
+
+    public void handleDriveRemoved(String message){
+            Drive drive = server.getHardDrive(getSlot());
+            server.decrementNumOfDrives();
+            // Add the drive to the slotMap in the DriveServer class
+            server.removeHardDrive(drive.getSlot());
+
+            serverModel = Project.getServerModel(server.getServerName());
+            if (drive.getStatus().equals("Wiping")){
+                serverModel.setNumOfWiping(serverModel.getNumOfWiping() - 1);
+            } else if (drive.getStatus().equals("Complete")){
+                serverModel.setNumOfCompleted(serverModel.getNumOfCompleted() - 1);
+            } else if (drive.getStatus().equals("Error Occurred")) {
+                serverModel.setNumOfFailed(serverModel.getNumOfFailed() - 1);
+            }
+
+
+
+        serverModel.setNumOfConnected(serverModel.getNumOfConnected() - 1);
+
+        try {
+            // Update the status of the drive in the database only if it is not already complete, or failed
+            driveDAO().updateStatus(getSerialNumber(), "Disconnected");
+            // Update the ServerModel in the database
+            serverDAO().updateDriveServer(serverModel);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        // Update the UI
+        mainController.updateUI(serverModel);
+    }
+
+    private void handleDriveError(String serialNumber) {
+        Drive drive = server.getHardDrive(getSlot());
+        drive.setStatus("Error Occurred");
+
+        serverModel = Project.getServerModel(server.getServerName());
+
+        if (drive.getStatus().equals("Wiping")){
+            serverModel.setNumOfWiping(serverModel.getNumOfWiping() - 1);
+        }
+        serverModel.setNumOfFailed(serverModel.getNumOfFailed() + 1);
+
+        try {
+            // Update the drive into the database
+            driveDAO().updateStatus(getSerialNumber(), "Error Occurred");
+            // Update the ServerModel in the database
+            serverDAO().updateDriveServer(serverModel);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        // Update the UI
+        mainController.updateUI(serverModel);
+    }
+
 
 
 }

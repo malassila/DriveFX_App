@@ -89,7 +89,7 @@ public class ClientSideSocket implements Runnable{
         sendMessageToServer(message);
     }
     public void sendRemoveDriveMessage(String slot, String serialNumber) throws UnknownHostException {
-        String message = DriveMessageService.createMessage(DRIVE, serverName, REMOVE, slot, serialNumber, "ADD");
+        String message = String.join(" ", "DRIVE", serverName, "REMOVE", slot, serialNumber);
         sendMessageToServer(message);
     }
 

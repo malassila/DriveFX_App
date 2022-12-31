@@ -1,5 +1,6 @@
 package com.pcsp.driveauditfx.shared.device;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.layout.HBox;
 
 import java.util.HashMap;
@@ -9,6 +10,10 @@ public class DriveServer {
     private String status;
     private HashMap<String, Drive> slotMap;
     private int numberOfDrivesConnected;
+    private SimpleIntegerProperty connectedDrives = new SimpleIntegerProperty();
+    private SimpleIntegerProperty wipingDrives = new SimpleIntegerProperty();
+    private SimpleIntegerProperty doneWipingDrives = new SimpleIntegerProperty();
+    private SimpleIntegerProperty failedDrives = new SimpleIntegerProperty();
 
 
     public DriveServer() {

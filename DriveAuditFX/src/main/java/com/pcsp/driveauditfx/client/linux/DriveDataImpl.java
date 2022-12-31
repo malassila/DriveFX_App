@@ -29,7 +29,6 @@ public class DriveDataImpl implements DriveData {
         saveSMART();
         saveDriveInfo();
             drive.setSlot(extractSlot(getSlot()));
-//            drive.setSlot(extractSlot("pci-0000:03:00.0-sas-exp0x5001438024db7940-phy7-lun-0"));
             drive.setModel(getModel());
             drive.setSerial(getSerialNumber());
             drive.setType(getType());

@@ -1,14 +1,18 @@
 package com.pcsp.driveauditfx.server.socket;
 
+import com.pcsp.driveauditfx.server.messages.MessageHandler;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class SocketConnect {
     private ServerSocket serverSocket;
+    private MessageHandler messageHandler;
 
-    public SocketConnect(ServerSocket serverSocket) {
+    public SocketConnect(ServerSocket serverSocket, MessageHandler messageHandler) {
         this.serverSocket = serverSocket;
+        this.messageHandler = messageHandler;
     }
     public void startSocket() {
         new Thread(() -> {
@@ -16,7 +20,7 @@ public class SocketConnect {
                 try {
                     Socket socket = serverSocket.accept();
                     System.out.println("Client connected");
-                    new Thread(new ServerSideSocket(socket)).start();
+                    new Thread(new ServerSideSocket(socket, messageHandler)).start();
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {

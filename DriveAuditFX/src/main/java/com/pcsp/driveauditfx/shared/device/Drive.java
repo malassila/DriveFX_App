@@ -15,6 +15,9 @@ public class Drive {
     private String status;
     private boolean connected;
 
+    public Drive() {
+    }
+
     public Drive(String name) {
         this.name = name;
     }
