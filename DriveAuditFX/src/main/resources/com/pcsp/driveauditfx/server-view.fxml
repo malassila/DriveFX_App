@@ -68,17 +68,16 @@
                                           <Insets right="15.0" />
                                        </HBox.margin>
                                     </TextField>
-                                    <Button mnemonicParsing="false" text="Search" />
+                                    <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#handleSearchAction" text="Search" />
                                  </children>
                               </HBox>
-                              <TableView fx:id="tableView1" prefHeight="419.0" prefWidth="1016.0">
+                              <TableView fx:id="tableViewDrive" prefHeight="419.0" prefWidth="1016.0" styleClass="table-cell" stylesheets="@../../../css/main.css">
                                  <columns>
-                                    <TableColumn fx:id="colModel" prefWidth="169.0" text="Model" />
-                                    <TableColumn fx:id="colSerial" prefWidth="169.0" text="Serial" />
-                                    <TableColumn fx:id="colSize" prefWidth="169.0" text="Size" />
-                                    <TableColumn fx:id="colSmart" prefWidth="169.0" text="SMART" />
-                                    <TableColumn fx:id="colStatus" prefWidth="169.0" text="Status" />
-                                    <TableColumn fx:id="colDrivesFailed1" prefWidth="169.0" text="Failed" />
+                                    <TableColumn fx:id="colModel" prefWidth="203.0" text="Model" />
+                                    <TableColumn fx:id="colSerial" prefWidth="203.0" text="Serial" />
+                                    <TableColumn fx:id="colSize" prefWidth="203.0" text="Size" />
+                                    <TableColumn fx:id="colSmart" prefWidth="203.0" text="SMART" />
+                                    <TableColumn fx:id="colStatus" prefWidth="203.0" text="Status" />
                                  </columns>
                                  <cursor>
                                     <Cursor fx:constant="HAND" />

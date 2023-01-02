@@ -14,7 +14,7 @@ public interface HardDriveDAO {
     Drive getHardDrive(String serial) throws SQLException;
     List<Drive> getAllHardDrives() throws SQLException;
     List<DriveModel> getDrivesByStatus(String status) throws SQLException;
-    DriveModel getDriveBySerial(String serial) throws SQLException;
+    List<DriveModel> getDrivesBySerial(String serial) throws SQLException;
     List<DriveModel> getDrivesLike(String keyword) throws SQLException;
     void deleteHardDrive(String serial) throws SQLException;
 }

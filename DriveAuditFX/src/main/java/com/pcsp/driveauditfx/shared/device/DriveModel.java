@@ -10,19 +10,19 @@ public class DriveModel {
     private StringProperty size;
     private StringProperty smart;
     private StringProperty status;
-    private StringProperty failed;
+//    private StringProperty failed;
 
     public DriveModel() {
 
     }
 
-    public DriveModel(String model, String serial, String size, String smart, String status, String failed) {
+    public DriveModel(String model, String serial, String size, String smart, String status) {
         this.model = new SimpleStringProperty(model);
         this.serial = new SimpleStringProperty(serial);
         this.size = new SimpleStringProperty(size);
         this.smart = new SimpleStringProperty(smart);
         this.status = new SimpleStringProperty(status);
-        this.failed = new SimpleStringProperty(failed);
+//        this.failed = new SimpleStringProperty(failed);
     }
 
     public String getModel() {
@@ -85,15 +85,15 @@ public class DriveModel {
         this.status.set(status);
     }
 
-    public String getFailed() {
-        return failed.get();
-    }
-
-    public StringProperty failedProperty() {
-        return failed;
-    }
-
-    public void setFailed(String failed) {
-        this.failed.set(failed);
-    }
+//    public String getFailed() {
+//        return failed.get();
+//    }
+//
+//    public StringProperty failedProperty() {
+//        return failed;
+//    }
+//
+//    public void setFailed(String failed) {
+//        this.failed.set(failed);
+//    }
 }

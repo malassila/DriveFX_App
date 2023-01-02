@@ -248,7 +248,12 @@ System.out.println("Server status: " + serverModel.getStatus());
 
     }
 
+    public Drive getDriveInSlot(String slot){
+        return server.getHardDrive(slot);
+    }
+
     public void handleDriveWipeStart(String message){
+
             Drive drive = server.getHardDrive(getSlot());
             drive.setStatus("Wiping");
 
@@ -258,7 +263,7 @@ System.out.println("Server status: " + serverModel.getStatus());
 
         try {
             // Update the drive into the database
-            driveDAO().updateStatus(getSerialNumber(), "Wiping");
+            driveDAO().updateStatus(drive.getSerial(), "Wiping");
             // Update the ServerModel in the database
             serverDAO().updateDriveServer(serverModel);
         } catch (SQLException e) {
@@ -278,7 +283,7 @@ System.out.println("Server status: " + serverModel.getStatus());
 
         try {
             // Update the drive into the database
-            driveDAO().updateStatus(getSerialNumber(), "Complete");
+            driveDAO().updateStatus(drive.getSerial(), "Complete");
             // Update the ServerModel in the database
             serverDAO().updateDriveServer(serverModel);
         } catch (SQLException e) {
@@ -309,7 +314,7 @@ System.out.println("Server status: " + serverModel.getStatus());
 
         try {
             // Update the status of the drive in the database only if it is not already complete, or failed
-            driveDAO().updateStatus(getSerialNumber(), "Disconnected");
+            driveDAO().updateStatus(drive.getSerial(), "Disconnected");
             // Update the ServerModel in the database
             serverDAO().updateDriveServer(serverModel);
 
@@ -333,7 +338,7 @@ System.out.println("Server status: " + serverModel.getStatus());
 
         try {
             // Update the drive into the database
-            driveDAO().updateStatus(getSerialNumber(), "Error Occurred");
+            driveDAO().updateStatus(drive.getSerial(), "Error Occurred");
             // Update the ServerModel in the database
             serverDAO().updateDriveServer(serverModel);
         } catch (SQLException e) {

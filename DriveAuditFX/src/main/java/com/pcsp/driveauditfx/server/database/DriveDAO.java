@@ -49,7 +49,7 @@ import java.util.List;
         @Override
         public void updateStatus(String serial, String status) {
             try {
-                System.out.println("Updating status");
+//                System.out.println("Updating status of drive " + serial + " to " + status);
                 String sql = "UPDATE hard_drive SET status = ? WHERE serial = ? AND status NOT IN ('Complete', 'Error Occurred')";
 
                 PreparedStatement statement = connection.prepareStatement(sql);
@@ -64,7 +64,7 @@ import java.util.List;
         }
         public void updateDriveName(String serial, String name) {
             try {
-                System.out.println("Updating drive name");
+//                System.out.println("Updating drive name");
                 String sql = "UPDATE hard_drive SET name = ? WHERE serial = ? AND status NOT IN ('Complete', 'Error Occurred')";
 
                 PreparedStatement statement = connection.prepareStatement(sql);
@@ -158,28 +158,34 @@ import java.util.List;
         }
 
         @Override
-        public DriveModel getDriveBySerial(String serial) throws SQLException {
+        public List<DriveModel> getDrivesBySerial(String serial) throws SQLException {
             try {
-                String sql = "SELECT * FROM hard_drive WHERE serial = ?";
+                String sql = "SELECT model, serial, size, smart_result, status FROM hard_drive WHERE serial like concat('%', ?, '%')";
                 PreparedStatement statement = connection.prepareStatement(sql);
 
                 statement.setString(1, serial);
                 ResultSet resultSet = statement.executeQuery();
 
-                DriveModel drive = new DriveModel();
-                // model, serial, size, smart_result, status
-                drive.setModel(resultSet.getString("model"));
-                drive.setSerial(resultSet.getString("serial"));
-                drive.setSize(resultSet.getString("size"));
-                drive.setSmart(resultSet.getString("smart_result"));
-                drive.setStatus(resultSet.getString("status"));
+                List<DriveModel> drives = new ArrayList<>();
 
+                while (resultSet.next()) {
+                    System.out.println("Found drive");
 
-                return drive;
+                    String model = resultSet.getString("model");
+                    String serialNumber = resultSet.getString("serial");
+                    String size = resultSet.getString("size");
+                    String smartResult = resultSet.getString("smart_result");
+                    String status = resultSet.getString("status");
+                    System.out.println(model + " " + serialNumber + " " + size + " " + smartResult + " " + status);
+                    DriveModel drive = new DriveModel(model, serialNumber, size, smartResult, status.toUpperCase());
+                    drives.add(drive);
+                }
+
+                return drives;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            return new DriveModel();
+            return new ArrayList<>();
         }
 
         @Override
