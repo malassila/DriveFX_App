@@ -21,3 +21,14 @@ public class LaunchClient {
         driveEventHandler.handleDriveConnected("sdc");
     }
 }
+
+
+//public class LaunchClient {
+//    public static void main(String[] args) {
+//        ClientWebSocket clientWebSocket = new ClientWebSocket(SERVER_NAME);
+//        clientWebSocket.connect(SERVER_IP, SERVER_PORT);
+//        DriveEventHandlerImpl driveEventHandler = new DriveEventHandlerImpl();
+//        driveEventHandler.setClientSocket(clientWebSocket);
+//        driveEventHandler.handleDriveConnected("sdc");
+//    }
+//}

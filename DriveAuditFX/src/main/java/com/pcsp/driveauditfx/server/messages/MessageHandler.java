@@ -9,6 +9,7 @@ import com.pcsp.driveauditfx.shared.messages.DriveMessageService;
 import com.pcsp.driveauditfx.shared.messages.ServerMessageService;
 import com.pcsp.driveauditfx.shared.device.Drive;
 import com.pcsp.driveauditfx.shared.device.DriveServer;
+import com.pcsp.driveauditfx.shared.utils.StringUtils;
 
 import java.sql.SQLException;
 
@@ -23,6 +24,7 @@ public class MessageHandler implements Message {
     private ServerSideSocket serverSideSocket;
     private DriveServerDAO driveServerDAO;
     private HardDriveDAO hardDriveDAO;
+    private MessageDAO messageDAO;
     private MainController mainController;
 
     /**
@@ -81,10 +83,11 @@ public class MessageHandler implements Message {
 
     @Override
     public void processRawMessage(String message, ServerSideSocket serverSideSocket) {
-//        System.out.println("Processing message");
+        System.out.println("Processing message: " + message);
         this.serverSideSocket = serverSideSocket;
         messageArray = splitMessage(message);
         this.server = getServer();
+        insertMessageIntoDatabase(formattedMessage());
         String messageType = getType();
 
 
@@ -99,23 +102,42 @@ public class MessageHandler implements Message {
         }
     }
 
+    public String formattedMessage() {
+        String formattedMessage = "";
+        switch (getType()){
+            case "SERVER":
+                if (getCommand().equals("ADD")) {
+                    formattedMessage = getServer().getServerName() + " Connected!";
+                } else {
+                    formattedMessage = getServer().getServerName() + " Disconnected!";
+                }
+                break;
+            case "DRIVE":
+                if (getCommand().equals("ADD")) {
+                    formattedMessage = getServer().getServerName() + "-->>" + getSlot()  + " Drive Added!";
+                } else if (getCommand().equals("REMOVE")) {
+                    formattedMessage = getServer().getServerName() + "-->>" + getSlot()  + " Drive Removed!";
+                } else {
+                    formattedMessage = getServer().getServerName() + "-->>" + getSlot()  + " Drive Update: " + getCommand();
+                }
+                break;
+        }
 
+    return formattedMessage;
+    }
 
     public void processServerMessage() {
         System.out.println("Processing server command");
         switch (getCommand()) {
             case "ADD":
-                this.serverSideSocket.setDriveServer(server);
-                ServerSideSocket.addDriveServer(server);
-                this.server.setStatus("Connected");
-                serverDAO().driveServerConnected(server);
+                    handleServerConnected(getMessage());
                 break;
-            case "UPDATE":
+            case "REMOVE":
+                    handleServerDisconnected(server.getServerName());
                 break;
             default:
-                System.out.println("REMOVED SUCCESSFULLY");
-                this.server.setStatus("Disconnected");
-                serverDAO().driveServerDisconnected(server);
+                System.out.println("Invalid server command");
+
                 break;
         }
     }
@@ -123,10 +145,10 @@ public class MessageHandler implements Message {
     void processDriveMessage(String message) {
         switch (getCommand()) {
             case "ADD":
-                    handleDriveConnected(getSerialNumber());
+                    handleDriveConnected(message);
                 break;
             case "REMOVE":
-                    handleDriveRemoved(getSerialNumber());
+                    handleDriveRemoved(message);
                 break;
             case "WIPING":
                     handleDriveWipeStart(getSerialNumber());
@@ -151,7 +173,18 @@ public class MessageHandler implements Message {
             return hardDriveDAO;
     }
 
+    public MessageDAO messageDAO(){
+            messageDAO = new MessageDAO(DatabaseConnection.getConnection());
+            return messageDAO;
+    }
+
+    public void insertMessageIntoDatabase(String message){
+        messageDAO().insertMessage(StringUtils.getInt(getServer().getServerName()), message);
+    }
+
+
     public void handleDriveConnected(String message){
+        System.out.println("Drive connected" + message + " " + getSlot());
         driveMessageService = new DriveMessageService(message);
         Drive drive = driveMessageService.saveDriveData();
         drive.setStatus("IDLE");
@@ -173,6 +206,46 @@ public class MessageHandler implements Message {
 
         // Update the UI
         mainController.updateUI(serverModel);
+    }
+
+    public void handleServerDisconnected(String message){
+        System.out.println("REMOVED SUCCESSFULLY");
+        this.server.setStatus("Disconnected");
+
+        serverModel = Project.getServerModel(server.getServerName());
+
+        // reset all the values in the serverModel
+        serverModel.setNumOfConnected(0);
+        serverModel.setNumOfWiping(0);
+        serverModel.setNumOfCompleted(0);
+        serverModel.setNumOfFailed(0);
+        serverModel.setStatus("Disconnected");
+
+        // Update the ServerModel in the database
+        serverDAO().updateDriveServer(serverModel);
+        serverDAO().updateDriveServerStatus(serverModel);
+System.out.println("Server status: " + serverModel.getStatus());
+        // Update the UI
+        mainController.updateUI(serverModel);
+    }
+
+    public void handleServerConnected(String message){
+        this.serverSideSocket.setDriveServer(server);
+        ServerSideSocket.addDriveServer(server);
+//        this.server.setStatus("Connected");
+
+        serverModel = Project.getServerModel(server.getServerName());
+
+        serverModel.setStatus("Connected");
+
+        // Update the ServerModel in the database
+        serverDAO().updateDriveServer(serverModel);
+        serverDAO().updateDriveServerStatus(serverModel);
+
+        // Update the UI
+        mainController.updateUI(serverModel);
+
+
     }
 
     public void handleDriveWipeStart(String message){

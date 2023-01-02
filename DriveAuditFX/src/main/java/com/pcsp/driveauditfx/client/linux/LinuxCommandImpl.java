@@ -34,21 +34,21 @@ public class LinuxCommandImpl implements LinuxCommand {
         System.out.println("Running command: " + command);
         String output = "";
         try {
-            Process p = Runtime.getRuntime().exec(command);
-            p.waitFor();
-            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(p.getInputStream()));
-            String line = "";
-            while ((line = reader.readLine()) != null) {
-                if (command.contains("smartctl")) {
-                    FileData.appendLineToFile("/smart/smart_" + name + ".txt", line);
-                } else if (command.contains("lsblk")) {
-                    FileData.appendLineToFile("/smart/driveInfo_" + name + ".txt", line);
-                } else {
-                    output += line;
-                }
-                System.out.println("-->> " + line);
-                output += line + " ";
-            }
+//            Process p = Runtime.getRuntime().exec(command);
+//            p.waitFor();
+//            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(p.getInputStream()));
+//            String line = "";
+//            while ((line = reader.readLine()) != null) {
+//                if (command.contains("smartctl")) {
+//                    FileData.appendLineToFile("/smart/smart_" + name + ".txt", line);
+//                } else if (command.contains("lsblk")) {
+//                    FileData.appendLineToFile("/smart/driveInfo_" + name + ".txt", line);
+//                } else {
+//                    output += line;
+//                }
+//                System.out.println("-->> " + line);
+//                output += line + " ";
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         }

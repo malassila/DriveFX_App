@@ -42,5 +42,9 @@ public class StringUtils {
         }
     }
 
+    public static int getInt(String line) {
+        return Integer.parseInt(line.replaceAll("[^0-9]", ""));
+    }
+
 
 }

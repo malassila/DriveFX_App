@@ -28,7 +28,7 @@ public class DriveDataImpl implements DriveData {
         linuxCommand = new LinuxCommandImpl(drive.getName());
         saveSMART();
         saveDriveInfo();
-            drive.setSlot(extractSlot(getSlot()));
+            drive.setSlot("Slot1");
             drive.setModel(getModel());
             drive.setSerial(getSerialNumber());
             drive.setType(getType());

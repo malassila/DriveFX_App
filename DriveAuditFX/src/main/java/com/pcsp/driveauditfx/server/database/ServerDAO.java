@@ -20,7 +20,7 @@ public class ServerDAO implements DriveServerDAO {
 
     @Override
     public void insertDriveServer(DriveServer server) throws SQLException {
-        String sql = "INSERT INTO servers (name) VALUES (?)";
+        String sql = "INSERT INTO server (name) VALUES (?)";
 
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setString(1, server.getServerName());
@@ -31,7 +31,7 @@ public class ServerDAO implements DriveServerDAO {
     @Override
     public void updateDriveServer(ServerModel server) {
         try {
-            String sql = "UPDATE servers SET connected = ?, wiping = ?, failed = ?, complete = ? WHERE name = ?";
+            String sql = "UPDATE server SET connected_drives = ?, wiping_drives = ?, failed_drives = ?, completed_drives = ? WHERE name = ?";
 
             PreparedStatement statement = connection.prepareStatement(sql);
 
@@ -47,11 +47,27 @@ public class ServerDAO implements DriveServerDAO {
         }
 
     }
+    @Override
+    public void updateDriveServerStatus(ServerModel server) {
+        try {
+            String sql = "UPDATE server SET status = ? WHERE name = ?";
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            statement.setString(1, server.getStatus());
+            statement.setString(2, server.getServerName());
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     @Override
     public void driveServerConnected(DriveServer server) {
         try {
-            String sql = "UPDATE servers SET connected = ? WHERE name = ?";
+            String sql = "UPDATE server SET status = ? WHERE name = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
 
             statement.setString(1, "Connected");
@@ -66,7 +82,7 @@ public class ServerDAO implements DriveServerDAO {
     @Override
     public void driveServerDisconnected(DriveServer server) {
         try {
-            String sql = "UPDATE servers SET connected = ? WHERE name = ?";
+            String sql = "UPDATE server SET status = ? WHERE name = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
 
             statement.setString(1, "Disconnected");
@@ -82,7 +98,7 @@ public class ServerDAO implements DriveServerDAO {
     @Override
     public ServerModel getDriveServer(String serverName) {
         try {
-            String sql = "SELECT * FROM servers WHERE name = ?";
+            String sql = "SELECT * FROM server WHERE name = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
 
             statement.setString(1, serverName);
@@ -93,7 +109,7 @@ public class ServerDAO implements DriveServerDAO {
             String status = resultSet.getString("status");
             int connected = resultSet.getInt("connected_drives");
             int wiping = resultSet.getInt("wiping_drives");
-            int complete = resultSet.getInt("complete_drives");
+            int complete = resultSet.getInt("completed_drives");
             int failed = resultSet.getInt("failed_drives");
             ServerModel server = new ServerModel(name, status , connected, wiping, complete, failed);
 
@@ -108,7 +124,7 @@ public class ServerDAO implements DriveServerDAO {
     @Override
     public List<ServerModel> getAllServers() {
         try {
-            String sql = "SELECT * FROM servers";
+            String sql = "SELECT * FROM server";
             PreparedStatement statement = connection.prepareStatement(sql);
 
             ResultSet resultSet = statement.executeQuery();
@@ -120,7 +136,7 @@ public class ServerDAO implements DriveServerDAO {
                 String status = resultSet.getString("status");
                 int connectedDrives = resultSet.getInt("connected_drives");
                 int wipingDrives = resultSet.getInt("wiping_drives");
-                int completeDrives = resultSet.getInt("complete_drives");
+                int completeDrives = resultSet.getInt("completed_drives");
                 int failedDrives = resultSet.getInt("failed_drives");
 
                 ServerModel server = new ServerModel(name, status, connectedDrives, wipingDrives, completeDrives, failedDrives);

@@ -9,6 +9,7 @@ import java.util.List;
 public interface DriveServerDAO {
         void insertDriveServer(DriveServer server) throws SQLException;
         void updateDriveServer(ServerModel server);
+        void updateDriveServerStatus(ServerModel server);
         void driveServerConnected(DriveServer server);
         void driveServerDisconnected(DriveServer server);
         ServerModel getDriveServer(String serverName) throws SQLException;

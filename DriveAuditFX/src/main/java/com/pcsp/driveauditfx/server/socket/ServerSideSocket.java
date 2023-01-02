@@ -22,6 +22,7 @@ public class ServerSideSocket implements Runnable {
     private BufferedWriter bufferedWriter;
     private MessageHandler messageHandler;
     private DriveServer driveServer;
+    private String serverName;
     public ServerSideSocket(Socket socket, MessageHandler messageHandler) {
         try {
             this.socket = socket;
@@ -31,6 +32,7 @@ public class ServerSideSocket implements Runnable {
             this.driveServers = new ArrayList<>();
             System.out.println("Server has been connected successfully!");
         } catch (IOException e) {
+            System.out.println("Server has not been connected successfully!");
             closeEverything(socket, bufferedReader, bufferedWriter);
         }
     }
@@ -42,14 +44,18 @@ public class ServerSideSocket implements Runnable {
             while (socket.isConnected() || bufferedReader.ready()) {
                 serverResponse = bufferedReader.readLine();
                 if (serverResponse != null) {
-//                    System.out.println("Server Response: " + serverResponse);
+                    if (serverResponse.contains("SERVER") && serverResponse.contains("ADD")) {
+                        String[] messageArray = serverResponse.split(" ");
+                        serverName = messageArray[1];
+                    }
                     messageHandler.processRawMessage(serverResponse, this);
                 } else {
-                    messageHandler.processServerMessage();
                     closeEverything(socket, bufferedReader, bufferedWriter);
                 }
             }
         } catch (IOException e) {
+            System.out.println("Disconnected from server");
+            messageHandler.processRawMessage("SERVER "+serverName+" REMOVE", this);
             closeEverything(socket, bufferedReader, bufferedWriter);
         }
     }

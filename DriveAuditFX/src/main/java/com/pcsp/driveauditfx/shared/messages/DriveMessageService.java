@@ -92,6 +92,7 @@ public class DriveMessageService {
     }
 
     public String getName() {
+        System.out.println("Name: " + messageArray[0]);
         String name = messageArray[4];
         return getIndex(4);
     }
@@ -148,7 +149,8 @@ public class DriveMessageService {
 
     public Drive saveDriveData() {
         server = getServer();
-        Drive drive = new Drive(getName());
+        System.out.println("Server: " + server);
+        Drive drive = new Drive("sdc");
             drive.setModel(getModel());
             drive.setSerial(getSerial());
             drive.setType(getType());

@@ -87,6 +87,18 @@ public class ClientSideSocket implements Runnable{
                         drive.getStatus());
 
         sendMessageToServer(message);
+        try {
+            Thread.sleep(6000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        sendMessageToServer("DRIVE "+serverName+" WIPING "+drive.getSlot() + " a a a a a");
+        try {
+            Thread.sleep(9000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        sendMessageToServer("DRIVE "+serverName+" COMPLETE "+drive.getSlot() + " a a a a a");
     }
     public void sendRemoveDriveMessage(String slot, String serialNumber) throws UnknownHostException {
         String message = String.join(" ", "DRIVE", serverName, "REMOVE", slot, serialNumber);

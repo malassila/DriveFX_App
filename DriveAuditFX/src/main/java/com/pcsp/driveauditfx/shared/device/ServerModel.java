@@ -87,4 +87,16 @@ public class ServerModel {
     public void setNumOfFailed(int numOfFailed) {
         this.numOfFailed.set(numOfFailed);
     }
+
+    @Override
+    public String toString() {
+        return "ServerModel{" +
+                "serverName=" + serverName +
+                ", status=" + status +
+                ", numOfConnected=" + numOfConnected +
+                ", numOfWiping=" + numOfWiping +
+                ", numOfCompleted=" + numOfCompleted +
+                ", numOfFailed=" + numOfFailed +
+                '}';
+    }
 }

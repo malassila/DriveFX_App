@@ -1,11 +1,9 @@
 package com.pcsp.driveauditfx.server.database;
 
 import com.pcsp.driveauditfx.shared.device.Drive;
+import com.pcsp.driveauditfx.shared.device.DriveModel;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +17,8 @@ import java.util.List;
         @Override
         public void insertHardDrive(Drive hardDrive){
             try {
-                String sql = "INSERT INTO hard_drives (slot, name, model, serial, type, sector_size, size, smart_result, hours, rsec, spindle_speed, status, connected) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO hard_drive (slot, name, model, serial, type, sector_size, size, smart_result, hours, rsec, spindle_speed, status) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
                 PreparedStatement statement = connection.prepareStatement(sql);
 
@@ -36,10 +34,14 @@ import java.util.List;
                 statement.setString(10, hardDrive.getRsec());
                 statement.setString(11, hardDrive.getSpindleSpeed());
                 statement.setString(12, hardDrive.getStatus());
-                statement.setBoolean(13, hardDrive.isConnected());
 
                 statement.executeUpdate();
-            } catch (SQLException e) {
+            } catch (SQLIntegrityConstraintViolationException e) {
+                System.out.println("Drive already exists");
+                updateStatus(hardDrive.getSerial(), "CONNECTED");
+                updateSlot(hardDrive.getSerial(), hardDrive.getSlot());
+                updateDriveName(hardDrive.getSerial(), hardDrive.getName());
+            }catch (SQLException e) {
                 e.printStackTrace();
             }
         }
@@ -47,8 +49,8 @@ import java.util.List;
         @Override
         public void updateStatus(String serial, String status) {
             try {
-
-                String sql = "UPDATE hard_drives SET status = ? WHERE serial = ? AND status NOT IN ('Complete', 'Error Occurred')";
+                System.out.println("Updating status");
+                String sql = "UPDATE hard_drive SET status = ? WHERE serial = ? AND status NOT IN ('Complete', 'Error Occurred')";
 
                 PreparedStatement statement = connection.prepareStatement(sql);
 
@@ -60,11 +62,27 @@ import java.util.List;
                 e.printStackTrace();
             }
         }
+        public void updateDriveName(String serial, String name) {
+            try {
+                System.out.println("Updating drive name");
+                String sql = "UPDATE hard_drive SET name = ? WHERE serial = ? AND status NOT IN ('Complete', 'Error Occurred')";
+
+                PreparedStatement statement = connection.prepareStatement(sql);
+
+                statement.setString(1, name);
+                statement.setString(2, serial);
+
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
 
         @Override
         public void updateSlot(String serial, String slot) {
             try {
-                String sql = "UPDATE hard_drives SET slot = ? WHERE serial = ?";
+                System.out.println("Updating slot");
+                String sql = "UPDATE hard_drive SET slot = ? WHERE serial = ?";
 
                 PreparedStatement statement = connection.prepareStatement(sql);
                 // allow slot to be null if drive is not connected
@@ -84,7 +102,8 @@ import java.util.List;
         @Override
         public void updateStatus(String serial, boolean connected) {
             try {
-                String sql = "UPDATE hard_drives SET connected = ? WHERE serial = ?";
+                System.out.println("Updating status");
+                String sql = "UPDATE hard_drive SET connected = ? WHERE serial = ?";
 
                 PreparedStatement statement = connection.prepareStatement(sql);
 
@@ -106,7 +125,7 @@ import java.util.List;
 
         @Override
         public List<Drive> getAllHardDrives() throws SQLException {
-            String sql = "SELECT * FROM hard_drives";
+            String sql = "SELECT * FROM hard_drive";
 
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
@@ -126,11 +145,46 @@ import java.util.List;
                 drive.setRsec(resultSet.getString("rsec"));
                 drive.setSpindleSpeed(resultSet.getString("spindle_speed"));
                 drive.setStatus(resultSet.getString("status"));
-                drive.setConnected(resultSet.getBoolean("connected"));
                 drives.add(drive);
             }
 
             return drives;
+        }
+
+        @Override
+        public List<DriveModel> getDrivesByStatus(String status) throws SQLException {
+
+            return null;
+        }
+
+        @Override
+        public DriveModel getDriveBySerial(String serial) throws SQLException {
+            try {
+                String sql = "SELECT * FROM hard_drive WHERE serial = ?";
+                PreparedStatement statement = connection.prepareStatement(sql);
+
+                statement.setString(1, serial);
+                ResultSet resultSet = statement.executeQuery();
+
+                DriveModel drive = new DriveModel();
+                // model, serial, size, smart_result, status
+                drive.setModel(resultSet.getString("model"));
+                drive.setSerial(resultSet.getString("serial"));
+                drive.setSize(resultSet.getString("size"));
+                drive.setSmart(resultSet.getString("smart_result"));
+                drive.setStatus(resultSet.getString("status"));
+
+
+                return drive;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return new DriveModel();
+        }
+
+        @Override
+        public List<DriveModel> getDrivesLike(String keyword) throws SQLException {
+            return null;
         }
 
         @Override

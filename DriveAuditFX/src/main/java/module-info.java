@@ -5,9 +5,11 @@ module com.pcsp.driveauditfx {
     requires javafx.base;
     requires java.sql;
     requires jsch;
+    requires Java.WebSocket;
 
 
     opens com.pcsp.driveauditfx to javafx.fxml;
+    opens com.pcsp.driveauditfx.shared.device to javafx.base;
 //    exports com.pcsp.driveauditfx;
     exports com.pcsp.driveauditfx.server.FX.controller;
 //    opens com.pcsp.driveauditfx.server.FX to javafx.fxml;
