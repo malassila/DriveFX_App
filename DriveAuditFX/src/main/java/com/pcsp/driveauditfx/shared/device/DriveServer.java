@@ -10,10 +10,6 @@ public class DriveServer {
     private String status;
     private HashMap<String, Drive> slotMap;
     private int numberOfDrivesConnected;
-    private SimpleIntegerProperty connectedDrives = new SimpleIntegerProperty();
-    private SimpleIntegerProperty wipingDrives = new SimpleIntegerProperty();
-    private SimpleIntegerProperty doneWipingDrives = new SimpleIntegerProperty();
-    private SimpleIntegerProperty failedDrives = new SimpleIntegerProperty();
 
 
     public DriveServer() {
@@ -83,7 +79,16 @@ public class DriveServer {
     }
 
     public Drive getDriveByName(String driveName) {
-        return slotMap.values().stream().filter(drive -> drive.getName().equals(driveName)).findFirst().orElse(null);
+        System.out.println("Searching for drive with name: " + driveName);
+        System.out.println("Number of drives in slotMap: " + slotMap.size());
+        Drive drive = slotMap.values().stream()
+                .filter(d -> {
+                    System.out.println("Checking drive with name: " + d.getName());
+                    return d.getName().equals(driveName);
+                })
+                .findFirst().orElse(null);
+        System.out.println("Found drive: " + drive);
+        return drive;
     }
 
     public void clearHardDrives() {

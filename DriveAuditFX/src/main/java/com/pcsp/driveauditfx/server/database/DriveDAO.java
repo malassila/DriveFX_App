@@ -2,12 +2,16 @@ package com.pcsp.driveauditfx.server.database;
 
 import com.pcsp.driveauditfx.shared.device.Drive;
 import com.pcsp.driveauditfx.shared.device.DriveModel;
+import com.pcsp.driveauditfx.shared.utils.StringUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-    public class DriveDAO implements HardDriveDAO {
+import static com.pcsp.driveauditfx.shared.utils.StringUtils.getInt;
+
+
+public class DriveDAO implements HardDriveDAO {
         private Connection connection;
 
         public DriveDAO(Connection connection) {
@@ -15,10 +19,10 @@ import java.util.List;
         }
 
         @Override
-        public void insertHardDrive(Drive hardDrive){
+        public void insertHardDrive(Drive hardDrive, String serverName) {
             try {
-                String sql = "INSERT INTO hard_drive (slot, name, model, serial, type, sector_size, size, smart_result, hours, rsec, spindle_speed, status) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                String sql = "INSERT INTO hard_drive (slot, name, model, serial, type, sector_size, size, smart_result, hours, rsec, spindle_speed, status, server_id) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
                 PreparedStatement statement = connection.prepareStatement(sql);
 
@@ -34,6 +38,7 @@ import java.util.List;
                 statement.setString(10, hardDrive.getRsec());
                 statement.setString(11, hardDrive.getSpindleSpeed());
                 statement.setString(12, hardDrive.getStatus());
+                statement.setInt(13, getInt(serverName));
 
                 statement.executeUpdate();
             } catch (SQLIntegrityConstraintViolationException e) {

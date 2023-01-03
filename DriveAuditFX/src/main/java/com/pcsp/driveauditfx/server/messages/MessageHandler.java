@@ -11,7 +11,11 @@ import com.pcsp.driveauditfx.shared.device.Drive;
 import com.pcsp.driveauditfx.shared.device.DriveServer;
 import com.pcsp.driveauditfx.shared.utils.StringUtils;
 
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.pcsp.driveauditfx.shared.Project.servers;
 
@@ -21,11 +25,12 @@ public class MessageHandler implements Message {
     private ServerModel serverModel;
     private DriveMessageService driveMessageService;
     private ServerMessageService serverMessageService;
-    private ServerSideSocket serverSideSocket;
+    private static Map<String, ServerSideSocket> serverSideSockets = new HashMap();
     private DriveServerDAO driveServerDAO;
     private HardDriveDAO hardDriveDAO;
     private MessageDAO messageDAO;
     private MainController mainController;
+    private ServerSideSocket serverSideSocket;
 
     /**
      * DRIVE, serverName, ADD, slot, serialNumber, "ADD"
@@ -84,9 +89,9 @@ public class MessageHandler implements Message {
     @Override
     public void processRawMessage(String message, ServerSideSocket serverSideSocket) {
         System.out.println("Processing message: " + message);
-        this.serverSideSocket = serverSideSocket;
         messageArray = splitMessage(message);
         this.server = getServer();
+        serverSideSockets.put(server.getServerName(), serverSideSocket);
         insertMessageIntoDatabase(formattedMessage());
         String messageType = getType();
 
@@ -187,11 +192,14 @@ public class MessageHandler implements Message {
         System.out.println("Drive connected" + message + " " + getSlot());
         driveMessageService = new DriveMessageService(message);
         Drive drive = driveMessageService.saveDriveData();
-        drive.setStatus("IDLE");
+        drive.setStatus("Connected");
         Project.addDrive(drive);
         this.server.incrementNumOfDrives();
         // Add the drive to the slotMap in the DriveServer class
-        server.addHardDrive(drive.getSlot(), drive);
+        server.getNumOfDrives();
+        // TODO: FIX THIS TEMP
+        server.addHardDrive(getSlot(), drive);
+        System.out.println("Drive added to slotMap at slot: " + getSlot());
 
         serverModel = Project.getServerModel(server.getServerName());
 
@@ -200,13 +208,14 @@ public class MessageHandler implements Message {
 //        serverModel.setNumOfWiping(serverModel.getNumOfWiping() + 1);
 
         // Insert the new drive into the database
-        driveDAO().insertHardDrive(drive);
+        driveDAO().insertHardDrive(drive, serverModel.getServerName());
         // Update the ServerModel in the database
         serverDAO().updateDriveServer(serverModel);
 
         // Update the UI
         mainController.updateUI(serverModel);
     }
+
 
     public void handleServerDisconnected(String message){
         System.out.println("REMOVED SUCCESSFULLY");
@@ -230,7 +239,7 @@ System.out.println("Server status: " + serverModel.getStatus());
     }
 
     public void handleServerConnected(String message){
-        this.serverSideSocket.setDriveServer(server);
+//        this.serverSideSocket.setDriveServer(server);
         ServerSideSocket.addDriveServer(server);
 //        this.server.setStatus("Connected");
 
@@ -294,7 +303,13 @@ System.out.println("Server status: " + serverModel.getStatus());
     }
 
     public void handleDriveRemoved(String message){
-            Drive drive = server.getHardDrive(getSlot());
+        System.out.println(message);
+        System.out.println("name: " + getServer().getServerName());
+        System.out.println("slot: " + messageArray[3]);
+        System.out.println("name: " + server.getDriveByName(messageArray[3]));
+        System.out.println("name: " + server.getServerName());
+            Drive drive = server.getDriveByName(messageArray[3]);
+            System.out.println("Drive removed: " + drive);
             server.decrementNumOfDrives();
             // Add the drive to the slotMap in the DriveServer class
             server.removeHardDrive(drive.getSlot());
@@ -346,6 +361,19 @@ System.out.println("Server status: " + serverModel.getStatus());
         }
         // Update the UI
         mainController.updateUI(serverModel);
+    }
+
+    public void sendWipeMessage(String serverName){
+        ServerSideSocket serverSideSocket = serverSideSockets.get(serverName);
+        serverModel = Project.getServerModel(serverName);
+        serverModel.setStatus("Wiping");
+        // Update the ServerModel in the database
+        serverDAO().updateDriveServer(serverModel);
+            serverSideSocket.sendMessage("WIPE");
+    }
+
+    public ServerSideSocket getServerSideSocket(String serverName) {
+        return serverSideSockets.get(serverName);
     }
 
 

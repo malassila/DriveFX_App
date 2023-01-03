@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface HardDriveDAO {
-    void insertHardDrive(Drive hardDrive);
+    void insertHardDrive(Drive hardDrive, String serverName);
     void updateStatus(String serial, String status) throws SQLException;
     void updateSlot(String serial, String slot) throws SQLException;
     void updateStatus(String serial, boolean connected) throws SQLException;

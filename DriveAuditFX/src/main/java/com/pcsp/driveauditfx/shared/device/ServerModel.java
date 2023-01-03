@@ -20,6 +20,10 @@ public class ServerModel {
         this.numOfFailed = new SimpleIntegerProperty(numOfFailed);
     }
 
+    public ServerModel() {
+
+    }
+
     public String getServerName() {
         return serverName.get();
     }

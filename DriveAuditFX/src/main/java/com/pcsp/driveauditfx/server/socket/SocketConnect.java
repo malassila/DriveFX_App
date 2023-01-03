@@ -1,5 +1,6 @@
 package com.pcsp.driveauditfx.server.socket;
 
+import com.jcraft.jsch.Session;
 import com.pcsp.driveauditfx.server.messages.MessageHandler;
 
 import java.io.IOException;
