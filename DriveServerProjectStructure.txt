@@ -1,0 +1,36 @@
+/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   ├── com/
+│   │   │   │   ├── pcsp/
+│   │   │   │   │   ├── WipeApplication.java       # The Main Entry Point, Spring Boot application class
+│   │   │   │   │   ├── controller/
+│   |   │   │   │   │   ├── WipeController.java    # Controller for wiping hard drives
+│   |   │   │   │   │   └── MainServerController.java  # RestAPI Controller for receiving event messages from servers
+│   │   │   │   │   ├── service/
+│   │   │   │   │   │   ├── WipeService.java       # Service for wiping hard drives
+│   │   │   │   │   │   ├── EventService.java      # Service for sending event messages to main server
+│   │   │   │   │   │   ├── DriveDataService.java  # Service for getting drive data (e.g. serial number, model, drive size)
+│   │   │   │   │   │   ├── DriveMonitorService.java  # Service for monitoring the /dev directory for hard drive changes
+│   │   │   │   │   │   ├── PhysicalPortInitializer.java  # Service for initializing physical ports
+│   │   │   │   │   │   └── DriveServerInitializationRunner.java  # Component for initializing DriveServer entity
+|   |   |   |   |   ├── entity/
+│   │   │   │   │   │   ├── DriveData.java       # Entity for holding Drive information
+│   │   │   │   │   │   ├── PhysicalPort.java    # Entity for holding Physical Port information
+│   │   │   │   │   │   └── DriveServer.java     # Entity for holding DriveServer information
+│   │   │   │   │   ├── repository/
+│   │   │   │   │   │   ├── DriveDataRepository.java  # Repository for storing DriveData entities
+│   │   │   │   │   │   ├── PhysicalPortRepository.java  # Repository for storing PhysicalPort entities
+│   │   │   │   │   │   └── DriveServerRepository.java   # Repository for storing DriveServer entities
+│   │   ├── resources/
+│   │   │   ├── application.properties            # Application properties
+│   │   │   ├── logback-spring.xml                # Logback
+
+│   ├── test/
+│   └── resources/
+└── target/
+    ├── classes/                                   # Compiled class files
+    ├── lib/                                       # Dependency libraries
+    ├── wipe-0.0.1-SNAPSHOT.jar                    # Executable JAR file
+    └── wipe-0.0.1-SNAPSHOT.jar.original           # Original JAR file (before being repackaged with dependencies)
