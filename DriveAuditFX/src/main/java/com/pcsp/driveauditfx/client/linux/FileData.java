@@ -10,7 +10,7 @@ public class FileData {
     private final String filePath = "C:\\Users\\Matt\\Documents\\GitHub\\DriveFX_App\\DriveAuditFX\\src\\main\\java\\com\\pcsp\\driveauditfx\\client\\files\\";
     private BufferedReader bufferedReader;
     private Scanner scanner;
-
+l
 
     public FileData(String driveName, String fileName) throws FileNotFoundException {
         this.fileName = fileName + "_" + driveName + ".txt";

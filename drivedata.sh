@@ -1,5 +1,7 @@
 #!/bin/bash
 
+device=$1
+shift
 # Check if the file "/tmp/$device"_smart.txt" exists
 if [[ ! -f /tmp/$device"_smart.txt" ]]; then
   # create the file and change the permissions
@@ -17,7 +19,7 @@ if [[ ! -f /tmp/$device"_data.txt" ]]; then
     chmod 777 /tmp/$device"_data.txt"
 else
   # Overwrite the file and run the udevadm and lsblk commands
-  echo "udevadm info output"
+#   echo "udevadm info output"
   udevadm info $device >> /tmp/$device"_data.txt"
   echo ""
   echo 
@@ -51,61 +53,62 @@ while [[ $# -gt 0 ]]; do
       ;;
     -smart1)
       # Get the raw read error rate an awk out only the raw value
-      get_raw_read()
+    #   get_raw_read()
       shift
       ;;
     -smart3)
       # Get the spin-up time
-      value=$(grep '^ 3'/tmp/$device"_smart.txt" | awk '{print $10}')
+      value=$(cat /tmp/$device"_smart.txt" | grep '^ 3 ' | awk '{print $10}')
       echo "$value"
       shift
       ;;
     -smart4)
       # Get the start/stop count
-      value=$(grep '^ 4 ' /tmp/$device"_smart.txt | awk '{print $10}")
+      value=$(cat /tmp/$device"_smart.txt" | grep '^ 4 ' | awk '{print $10}')
       echo "$value"
       shift
       ;;
     -smart5)
       # Get the reallocated sector count
-      value=$(grep '^ 5'/tmp/$device"_smart.txt" | awk '{print $10}')
+      echo "SMART 5"
+      value=$(cat /tmp/$device"_smart.txt" | grep '^ 5 ' | awk '{print $10}')
       echo "$value"
       shift
       ;;
     -smart7)
       # Get the seek error rate
-      value=$(grep '^ 7 ' /tmp/$device"_smart.txt")
-      echo "Seek error rate: $value"
+      value=$(cat /tmp/$device"_smart.txt" | grep '^ 7 ' | awk '{print $10}')
+      echo "$value"
       shift
       ;;
     -smart9)
       # Get the power-on hours
-      value=$(grep '^ 9 ' /tmp/$device"_smart.txt")
-      echo "Power-on hours: $value"
+      value=$(cat /tmp/$device"_smart.txt" | grep '^ 9 ' | awk '{print $10}')
+      echo "$value"
       shift
       ;;
     -smart10)
         # Get the spin retry count
-        value=$(grep '^ 10 ' /tmp/$device"_smart.txt")
-        echo "Spin retry count: $value"
+        value=$(cat /tmp/$device"_smart.txt" | grep '^ 10 ' | awk '{print $10}')
+        echo "$value"
         shift
         ;;
     -smart12)
         # Get the power cycle count
-        value=$(grep '^ 12 ' /tmp/$device"_smart.txt")
-        echo "Power cycle count: $value"
+        value=$(cat /tmp/$device"_smart.txt" | grep '^ 12 ' | awk '{print $10}')
+        echo "$value"
         shift
         ;;
     -model)
         # Get the model number
         value=$(grep 'Device Model:' /tmp/$device"_smart.txt")
-        echo "Model number: $value"
+        echo "$value"
         shift
         ;;
     -serial)
         # Get the serial number
         value=$(grep 'Serial Number:' /tmp/$device"_smart.txt")
-        echo "Serial number: $value"
+        echo "$value"
         shift
         ;;
     -rotation)
