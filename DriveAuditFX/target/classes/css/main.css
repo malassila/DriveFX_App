@@ -1,0 +1,54 @@
+.root {
+    -fx-background-image: url("/com/pcsp/driveauditfx/images/harddrivebg.png");
+    -fx-background-size: cover;
+    -fx-background-repeat: no-repeat;
+}
+.table-cell {
+    -fx-alignment: center;
+    -fx-font-size: 14pt;
+}
+.table-row-cell:odd {
+  -fx-background-color: #f2f2f2;
+}
+
+.table-row-cell:even {
+  -fx-background-color: white;
+}
+.table-row-cell:hover {
+    -fx-background-color: #e0e0e0;
+    -fx-table-cell-border-color: #e0e0e0;
+}
+.table-row-cell:selected {
+    -fx-background-color: #006994;
+    -fx-table-cell-border-color: #006994;
+}
+.table-row-cell:selected:hover {
+    -fx-background-color: #3A7F9E;
+    -fx-table-cell-border-color: #3A7F9E;
+}
+.table-cell-main {
+    -fx-alignment: center;
+    -fx-font-size: 12pt;
+}
+.list-row-cell:odd {
+  -fx-background-color: #f2f2f2;
+}
+.list-row-cell:even {
+  -fx-background-color: white;
+}
+.list-row-cell:hover {
+    -fx-background-color: #e0e0e0;
+    -fx-table-cell-border-color: #e0e0e0;
+}
+.list-row-cell:selected {
+    -fx-background-color: #006994;
+    -fx-table-cell-border-color: #006994;
+}
+.list-row-cell:selected:hover {
+    -fx-background-color: #3A7F9E;
+    -fx-table-cell-border-color: #3A7F9E;
+}
+.list-cell-main {
+    -fx-alignment: center;
+    -fx-font-size: 12pt;
+}

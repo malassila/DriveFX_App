@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="paneMain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="851.0" prefWidth="1016.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pcsp.driveauditfx.server.FX.controller.MainController">
+    <children>
+        <HBox fx:id="hboxMain" layoutX="-5.0" layoutY="-26.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="851.0" prefWidth="1016.0" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="-5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="-3.0">
+            <children>
+                <TabPane fx:id="tabPaneMain" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="857.0" prefWidth="1016.0" style="-fx-background-color: #1C2842;" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                        <Tab fx:id="tabMain" text="Table View">
+                            <content>
+                                <VBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0">
+                                    <children>
+                              <TableView fx:id="tableView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" opacity="0.85" prefHeight="419.0" prefWidth="1016.0" styleClass="table-cell-main" stylesheets="@../../../css/main.css">
+                                <columns>
+                                  <TableColumn fx:id="colServerName" prefWidth="169.0" text="Server" />
+                                  <TableColumn fx:id="colServerStatus" prefWidth="169.0" text="Status" />
+                                    <TableColumn fx:id="colDrivesConnected" prefWidth="169.0" text="Connected" />
+                                    <TableColumn fx:id="colDrivesWiping" prefWidth="169.0" text="Wiping" />
+                                    <TableColumn fx:id="colDrivesCompleted" prefWidth="169.0" text="Completed" />
+                                    <TableColumn fx:id="colDrivesFailed" prefWidth="169.0" text="Failed" />
+                                </columns>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </TableView>
+                              <HBox alignment="CENTER_LEFT" prefHeight="64.0" prefWidth="1016.0">
+                                 <children>
+                                    <Button fx:id="btnSelectAll" alignment="CENTER" mnemonicParsing="false" onAction="#handleSelectAllButton" prefHeight="35.0" prefWidth="150.0" style="-fx-background-color: white;" text="SELECT ALL">
+                                       <effect>
+                                          <InnerShadow />
+                                       </effect>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <HBox.margin>
+                                          <Insets left="20.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="btnStartWipe" alignment="CENTER" mnemonicParsing="false" onAction="#handleWipeButton" prefHeight="35.0" style="-fx-background-color: white;" text="Start Wipe">
+                                       <effect>
+                                          <InnerShadow />
+                                       </effect>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <HBox.margin>
+                                          <Insets left="15.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                  <Button fx:id="btnSeeAllMessages" alignment="CENTER" mnemonicParsing="false" onAction="#handleSeeAllMessages" prefHeight="35.0" style="-fx-background-color: white;" text="See All Messages">
+                                       <effect>
+                                          <InnerShadow />
+                                       </effect>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <HBox.margin>
+                                          <Insets left="100.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="btnSeeSelectedMessages" alignment="CENTER" mnemonicParsing="false" onAction="#handleSeeSelectedMessages" prefHeight="35.0" style="-fx-background-color: white;" text="See Selected Messages">
+                                       <effect>
+                                          <InnerShadow />
+                                       </effect>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="btnDriveMap" alignment="CENTER" mnemonicParsing="false" onAction="#handleDriveMapButtonClick" prefHeight="35.0" style="-fx-background-color: white;" text="SEE DRIVE MAP">
+                                       <effect>
+                                          <InnerShadow />
+                                       </effect>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <HBox.margin>
+                                          <Insets left="300.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" opacity="0.85" prefHeight="310.0" prefWidth="999.0">
+                                 <children>
+                                    <ListView fx:id="listMessages" layoutX="239.0" layoutY="-24.0" minHeight="150.0" opacity="0.85" prefHeight="237.0" prefWidth="999.0" styleClass="list-row-cell" stylesheets="@../../../css/main.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </Tab>
+                  <Tab fx:id="tabSecond1" text="Search">
+                     <content>
+                        <VBox alignment="TOP_CENTER" prefHeight="622.0" prefWidth="991.0">
+                           <children>
+                              <HBox alignment="CENTER" prefHeight="68.0" prefWidth="1016.0" >
+                                 <children>
+                                    <TextField fx:id="txtSerialSearch" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="31.0" prefWidth="275.0" promptText="Enter Serial Number">
+                                       <HBox.margin>
+                                          <Insets right="15.0" />
+                                       </HBox.margin>
+                                    </TextField>
+                                    <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#handleSearchAction" text="Search" />
+                                 </children>
+                              </HBox>
+                              <TableView fx:id="tableViewDrive" prefHeight="604.0" prefWidth="1016.0" styleClass="table-cell" stylesheets="@../../../css/main.css">
+                                 <columns>
+                                    <TableColumn fx:id="colModel" prefWidth="203.0" text="Model" />
+                                    <TableColumn fx:id="colSerial" prefWidth="203.0" text="Serial" />
+                                    <TableColumn fx:id="colSize" prefWidth="203.0" text="Size" />
+                                    <TableColumn fx:id="colSmart" prefWidth="203.0" text="SMART" />
+                                    <TableColumn fx:id="colStatus" prefWidth="203.0" text="Status" />
+                                 </columns>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </TableView>
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
+                    </tabs>
+               <cursor>
+                  <Cursor fx:constant="OPEN_HAND" />
+               </cursor>
+                </TabPane>
+            </children>
+        </HBox>
+      <Button layoutX="950.0" layoutY="-48.0" mnemonicParsing="false" text="Button" />
+      <ScrollPane layoutX="-95.0" layoutY="849.0" opacity="0.85" prefHeight="312.0" prefWidth="1016.0" />
+    </children>
+</AnchorPane>
